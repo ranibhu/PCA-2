@@ -1,0 +1,217 @@
+Display an image to illustrate change in image quality with decreasing gray levels-128, 64, 32, 16 and 8. 
+ans:
+img = imread('cameraman.tif'); 
+figure, subplot(2,3,1), imshow(img), title('Original Image') gray_levels = [128, 64, 32, 16, 8]; 
+for i = 1:length(gray_levels) 
+reduced_img = uint8(floor(double(img) / (256 / gray_levels(i))) * (256 / gray_levels(i))); 
+subplot(2,3,i+1), imshow(reduced_img), title(['Gray Levels: ', num2str(gray_levels(i))]) 
+end 
+
+2. Write a code in Matlab to perform the following operations on an image: •
+a. Increase and decrease brightness of an image. •
+b. Manipulate contrast of an image. •
+c. Determine negative of an image
+=
+a. Increase and decrease brightness of an image. •
+img = imread('cameraman.tif');
+brighter_img = img + 50;
+darker_img = img - 50;
+figure,
+subplot(1,3,1), imshow(img), title('Original Image')
+subplot(1,3,2), imshow(brighter_img), title('Brighter Image')
+subplot(1,3,3), imshow(darker_img), title('Darker Image')
+b. Manipulate contrast of an image. •
+img = imread('cameraman.tif');
+contrast_img = imadjust(img, stretchlim(img), []);
+figure,
+subplot(1,2,1), imshow(img), title('Original Image')
+subplot(1,2,2), imshow(contrast_img), title('Contrast Adjusted Image')
+c. Determine negative of an image
+img = imread('cameraman.tif');
+negative_img = imcomplement(img);
+figure,
+subplot(1,2,1), imshow(img), title('Original Image')
+subplot(1,2,2), imshow(negative_img), title('Negative Image')
+
+3.Read an image and perform histogram equalization of the input image
+and analyse the result.
+=
+img = imread('cameraman.tif');
+equalized_img = histeq(img);
+figure,
+subplot(1,2,1), imshow(img), title('Original Image')
+subplot(1,2,2), imshow(equalized_img), title('Histogram Equalized Image')
+
+4.Read a grayscale image and convert it to a binary image using hard thresholding. Make the
+threshold value a user defined parameter. Vary the threshold and observe the result.
+=
+img = imread('cameraman.tif');
+threshold = 100; % Example threshold
+binary_img = img > threshold;
+figure,
+subplot(1,2,1), imshow(img), title('Original Image')
+subplot(1,2,2), imshow(binary_img), title(['Binary Image with Threshold ', num2str(threshold)])
+
+5. Read an image, convolve the image with the mask
+And show that it performs averaging operation which results in blurring of the image. Also analyse the impact of increasing the size of the mask to 5x5, that is, mask is
+=
+img = imread('cameraman.tif');
+mask3x3 = ones(3, 3) / 9;
+mask5x5 = ones(5, 5) / 25;
+avg_img3x3 = imfilter(img, mask3x3);
+avg_img5x5 = imfilter(img, mask5x5);
+figure,
+subplot(1,3,1), imshow(img), title('Original Image')
+subplot(1,3,2), imshow(avg_img3x3), title('Averaged with 3x3 Mask')
+subplot(1,3,3), imshow(avg_img5x5), title('Averaged with 5x5 Mask')
+
+6. Read an image and then corrupt the image by salt-and-pepper noise and Gaussian noise.
+Then apply
+an averaging filter of size 3 X 3 and 5 x 5 to this corrupted image. Comment on the result
+obtained.
+=
+img = imread('cameraman.tif');
+salt_pepper_img = imnoise(img, 'salt & pepper', 0.02);
+gaussian_img = imnoise(img, 'gaussian');
+filtered_sp_3x3 = imfilter(salt_pepper_img, ones(3, 3) / 9);
+filtered_sp_5x5 = imfilter(salt_pepper_img, ones(5, 5) / 25);
+filtered_gauss_3x3 = imfilter(gaussian_img, ones(3, 3) / 9);
+filtered_gauss_5x5 = imfilter(gaussian_img, ones(5, 5) / 25);
+figure,
+subplot(2,3,1), imshow(salt_pepper_img), title('Salt & Pepper Noise')
+subplot(2,3,2), imshow(filtered_sp_3x3), title('Filtered 3x3')
+subplot(2,3,3), imshow(filtered_sp_5x5), title('Filtered 5x5')
+subplot(2,3,4), imshow(gaussian_img), title('Gaussian Noise')
+subplot(2,3,5), imshow(filtered_gauss_3x3), title('Filtered 3x3')
+subplot(2,3,6), imshow(filtered_gauss_5x5), title('Filtered 5x5')
+
+7.Read an image and then corrupt the image by salt-and-pepper noise. Now apply a 3 x 3 box
+filter, a 5 x 5 box filter and a median filter to the corrupted image and comment on the result
+obtained.
+=
+img = imread('cameraman.tif');
+salt_pepper_img = imnoise(img, 'salt & pepper', 0.02);
+box_filter_3x3 = imfilter(salt_pepper_img, ones(3, 3) / 9);
+box_filter_5x5 = imfilter(salt_pepper_img, ones(5, 5) / 25);
+median_filter = medfilt2(salt_pepper_img, [3 3]);
+figure,
+subplot(2,2,1), imshow(salt_pepper_img), title('Salt & Pepper Noise')
+subplot(2,2,2), imshow(box_filter_3x3), title('3x3 Box Filter')
+subplot(2,2,3), imshow(box_filter_5x5), title('5x5 Box Filter')
+subplot(2,2,4), imshow(median_filter), title('Median Filter')
+
+8.Write a matlab program that performs a two-dimensional Butterworth low-pass and high-pass
+filter of the given image for two different cut-off frequencies.
+=
+img = imread('cameraman.tif');
+img_gray = img; % Image is already grayscale
+D0 = 30; % Cut-off frequency
+% Butterworth Low-pass filter
+H_low = butterworth_low_pass(size(img_gray), D0, 2);
+filtered_img_low = ifft2(fftshift(H_low .* fftshift(fft2(double(img_gray)))));
+% Butterworth High-pass filter
+H_high = butterworth_high_pass(size(img_gray), D0, 2);
+filtered_img_high = ifft2(fftshift(H_high .*
+fftshift(fft2(double(img_gray)))));
+figure,
+subplot(1,3,1), imshow(img_gray), title('Original Grayscale Image')
+subplot(1,3,2), imshow(real(filtered_img_low), []), title('Butterworth
+Low-pass Filtered Image')
+subplot(1,3,3), imshow(real(filtered_img_high), []), title('Butterworth
+High-pass Filtered Image')
+function H = butterworth_low_pass(dim, D0, n)
+% Butterworth Low-pass Filter
+[U, V] = dftuv(dim(1), dim(2));
+D = sqrt(U.^2 + V.^2);
+H = 1 ./ (1 + (D ./ D0).^(2*n));
+end
+function H = butterworth_high_pass(dim, D0, n)
+% Butterworth High-pass Filter
+[U, V] = dftuv(dim(1), dim(2));
+D = sqrt(U.^2 + V.^2);
+H = 1 ./ (1 + (D0 ./ D).^(2*n));
+end
+function [U, V] = dftuv(M, N)
+% Compute meshgrid frequency matrices.
+u = 0:(M-1);
+v = 0:(N-1);
+idx = find(u > M/2);
+u(idx) = u(idx) - M;
+idy = find(v > N/2);
+v(idy) = v(idy) - N;
+[V, U] = meshgrid(v, u);
+end
+
+9.Read an input image to perform the following operations:
+● a. High-pass filtering in the frequency domain
+● b. Low-pass filtering in the frequency domain
+● c. Band-pass filter in the frequency domain
+● d. Band-stop filter in the frequency domain
+=
+img = imread('cameraman.tif');
+img_gray = img; % Image is already grayscale
+% High-pass filter in frequency domain
+H_high = butterworth_high_pass(size(img_gray), 30, 2);
+filtered_img_high = ifft2(fftshift(H_high .*
+fftshift(fft2(double(img_gray)))));
+% Low-pass filter in frequency domain
+H_low = butterworth_low_pass(size(img_gray), 30, 2);
+filtered_img_low = ifft2(fftshift(H_low .* fftshift(fft2(double(img_gray)))));
+% Band-pass filter in frequency domain
+H_band_pass = butterworth_band_pass(size(img_gray), 10, 50, 2);
+filtered_img_band_pass = ifft2(fftshift(H_band_pass .*
+fftshift(fft2(double(img_gray)))));
+% Band-stop filter in frequency domain
+H_band_stop = butterworth_band_stop(size(img_gray), 10, 50, 2);
+filtered_img_band_stop = ifft2(fftshift(H_band_stop .*
+fftshift(fft2(double(img_gray)))));
+figure,
+subplot(2,2,1), imshow(real(filtered_img_high), []), title('High-pass Filter')
+subplot(2,2,2), imshow(real(filtered_img_low), []), title('Low-pass Filter')
+subplot(2,2,3), imshow(real(filtered_img_band_pass), []), title('Band-pass
+Filter')
+subplot(2,2,4), imshow(real(filtered_img_band_stop), []), title('Band-stop
+Filter')
+function H = butterworth_low_pass(dim, D0, n)
+% Butterworth Low-pass Filter
+[U, V] = dftuv(dim(1), dim(2));
+D = sqrt(U.^2 + V.^2);
+H = 1 ./ (1 + (D ./ D0).^(2*n));
+end
+function H = butterworth_high_pass(dim, D0, n)
+% Butterworth High-pass Filter
+[U, V] = dftuv(dim(1), dim(2));
+D = sqrt(U.^2 + V.^2);
+H = 1 ./ (1 + (D0 ./ D).^(2*n));
+end
+function H = butterworth_band_pass(dim, D1, D2, n)
+% Butterworth Band-pass Filter
+[U, V] = dftuv(dim(1), dim(2));
+D = sqrt(U.^2 + V.^2);
+H = 1 ./ (1 + ((D.^2 - D1*D2) ./ (D .* (D2 - D1))).^(2*n));
+end
+function H = butterworth_band_stop(dim, D1, D2, n)
+% Butterworth Band-stop Filter
+[U, V] = dftuv(dim(1), dim(2));
+D = sqrt(U.^2 + V.^2);
+H = 1 ./ (1 + ((D .* (D2 - D1)) ./ (D.^2 - D1*D2)).^(2*n));
+end
+function [U, V] = dftuv(M, N)
+% Compute meshgrid frequency matrices.
+u = 0:(M-1);
+v = 0:(N-1);
+idx = find(u > M/2);
+u(idx) = u(idx) - M;
+idy = find(v > N/2);
+v(idy) = v(idy) - N;
+[V, U] = meshgrid(v, u);
+end
+
+10.Read an image and degrade the image using motion blur.
+=
+img = imread('cameraman.tif');
+PSF = fspecial('motion', 21, 11);
+motion_blur_img = imfilter(img, PSF, 'conv', 'circular');
+figure,
+subplot(1,2,1), imshow(img), title('Original Image')
+subplot(1,2,2), imshow(motion_blur_img), title('Motion Blurred Image')
